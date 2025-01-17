@@ -1,4 +1,4 @@
-export function NoteEdit(): JSX.Element {
+export function NoteEdit() {
   return (
     <div className="note-edit">
       <input type="text" placeholder="Note name" />

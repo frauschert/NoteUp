@@ -4,7 +4,10 @@ export interface Note {
   timestamp: Date
 }
 
-export type GetNotes = () => Promise<Note[]>
-export type SaveNote = (name: string, content: string) => Promise<void>
-export type DeleteNote = (name: string) => Promise<void>
-export type UpdateNote = (oldName: string, newName: string, content: string) => Promise<void>
+export type NotesApi = {
+  getNoteByName: (name: string) => Promise<Note>
+  getNotes: () => Promise<Note[]>
+  saveNote: (name: string, content: string) => Promise<void>
+  deleteNote: (name: string) => Promise<void>
+  updateNote: (oldName: string, newName: string, content: string) => Promise<void>
+}

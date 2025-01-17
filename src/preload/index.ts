@@ -1,9 +1,15 @@
-import { contextBridge, ipcRenderer } from 'electron'
+import { contextBridge } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
-import { getNotes, saveNote, deleteNote, updateNote } from '../main/lib'
+import { getNotes, saveNote, deleteNote, updateNote, getNoteByName } from '../main/lib'
+import { createIpcRenderer } from './createIpcRenderer'
+import type { NotesApi } from '../shared/types'
+
+const ipcRenderer = createIpcRenderer<NotesApi>()
 
 // Custom APIs for renderer
 const api = {
+  getNoteByName: (...args: Parameters<typeof getNoteByName>) =>
+    ipcRenderer.invoke('getNoteByName', ...args),
   getNotes: (...args: Parameters<typeof getNotes>) => ipcRenderer.invoke('getNotes', ...args),
   saveNote: (...args: Parameters<typeof saveNote>) => ipcRenderer.send('saveNote', ...args),
   deleteNote: (...args: Parameters<typeof deleteNote>) => ipcRenderer.send('deleteNote', ...args),

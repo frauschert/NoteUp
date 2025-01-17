@@ -1,8 +1,12 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import { createNoteUpDir, getNotes, saveNote, deleteNote, updateNote } from './lib'
+import { createNoteUpDir, getNotes, saveNote, deleteNote, updateNote, getNoteByName } from './lib'
+import type { NotesApi } from '../shared/types'
+import { createIpcMain } from './createIpcMain'
+
+const ipcMainTyped = createIpcMain<NotesApi>()
 
 function createWindow(): void {
   // Create the browser window.
@@ -51,13 +55,11 @@ app.whenReady().then(async () => {
   })
 
   await createNoteUpDir()
-  ipcMain.handle('getNotes', () => getNotes())
-  ipcMain.on('saveNote', (_, ...args: Parameters<typeof saveNote>) => saveNote(...args))
-  ipcMain.on('deleteNote', (_, ...args: Parameters<typeof deleteNote>) => deleteNote(...args))
-  ipcMain.on('updateNote', (_, ...args: Parameters<typeof updateNote>) => updateNote(...args))
-
-  // IPC test
-  ipcMain.on('ping', () => console.log('pong'))
+  ipcMainTyped.handle('getNotes', () => getNotes())
+  ipcMainTyped.handle('getNoteByName', (_, ...args) => getNoteByName(...args))
+  ipcMainTyped.on('saveNote', (_, ...args) => saveNote(...args))
+  ipcMainTyped.on('deleteNote', (_, ...args) => deleteNote(...args))
+  ipcMainTyped.on('updateNote', (_, ...args) => updateNote(...args))
 
   createWindow()
 

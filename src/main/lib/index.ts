@@ -2,7 +2,6 @@ import { app } from 'electron'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { APP_NAME } from '../../shared/constants'
-import { GetNotes } from '../../shared/types'
 
 async function fileExists(name: string) {
   try {
@@ -34,7 +33,7 @@ export async function getNoteFileNames() {
   return files.filter((file) => file.endsWith('txt'))
 }
 
-async function getNoteByName(name: string) {
+export async function getNoteByName(name: string) {
   const stats = await fs.stat(path.join(getNoteUpDir(), name))
   const content = await fs.readFile(path.join(getNoteUpDir(), name), { encoding: 'utf-8' })
   return {
@@ -44,7 +43,7 @@ async function getNoteByName(name: string) {
   }
 }
 
-export const getNotes: GetNotes = async () => {
+export async function getNotes() {
   const noteFileNames = await getNoteFileNames()
   return Promise.all(noteFileNames.map((name) => getNoteByName(name)))
 }
